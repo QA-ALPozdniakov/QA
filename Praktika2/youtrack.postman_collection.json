@@ -1,0 +1,213 @@
+{
+	"info": {
+		"_postman_id": "e5b2960a-f6d7-4710-b9d3-dde5e87420e7",
+		"name": "youtrack",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20763723"
+	},
+	"item": [
+		{
+			"name": "Get project",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"ProjectID\", jsonData[1].id);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/admin/projects?fields=id,name,shortName' \\",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"admin",
+						"projects"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "id,name,shortName' \\"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New issue",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var rnd = Math.random();\r",
+							"pm.test(\"PreRequest\", function() {\r",
+							"    pm.collectionVariables.set(\"summary\", \"Pozdnyakov: AT\" + rnd);\r",
+							"    pm.collectionVariables.set(\"description\", \"Description: AT\" + rnd);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"Issueid\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"project\": {\r\n        \"id\": \"{{ProjectID}}\"\r\n    },\r\n    \"summary\": \"summary\",\r\n    \"description\":\"description.\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}api/issues",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"issues"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get issue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    pm.expect(jsonData.sammary).to.eql(pm.collectionVariables.get(\"sammary\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Your test description\", function () {\r",
+							"    pm.expect(jsonData.description).to.eql(pm.collectionVariables.get(\"description\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}api/issues/{{issueid}}?fields=$type,id,summary,customFields($type,id,projectCustomField($type,id,field($type,id,name)),value($type,avatarUrl,buildLink,color(id),fullName,id,isResolved,localizedName,login,minutes,name,presentation,text))",
+					"host": [
+						"{{URL}}api"
+					],
+					"path": [
+						"issues",
+						"{{issueid}}"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "$type,id,summary,customFields($type,id,projectCustomField($type,id,field($type,id,name)),value($type,avatarUrl,buildLink,color(id),fullName,id,isResolved,localizedName,login,minutes,name,presentation,text))"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "123456",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "wilgelmstarij@mail.ru",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "http://89.223.126.182:8080/",
+			"type": "string"
+		},
+		{
+			"key": "ProjectID",
+			"value": ""
+		},
+		{
+			"key": "summary",
+			"value": ""
+		},
+		{
+			"key": "description",
+			"value": ""
+		},
+		{
+			"key": "issueid",
+			"value": ""
+		},
+		{
+			"key": "Issueid",
+			"value": ""
+		}
+	]
+}
